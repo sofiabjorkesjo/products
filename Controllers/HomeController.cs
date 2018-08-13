@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using products.Models;
 
+
 namespace products.Controllers
 {
     public class HomeController : Controller
@@ -24,6 +25,9 @@ namespace products.Controllers
 
         public IActionResult Contact()
         {
+            var readFile = new DataBaseModel();
+            readFile.readDataSet();
+
             ViewData["Message"] = "Your contact page.";
 
             return View();
