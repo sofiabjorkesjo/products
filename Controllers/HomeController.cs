@@ -26,7 +26,8 @@ namespace products.Controllers
         public IActionResult Contact()
         {
             var readFile = new DataBaseModel();
-            readFile.readDataSet();
+            //readFile.readDataSet();
+            readFile.createDbAndInsertValues();
 
             ViewData["Message"] = "Your contact page.";
 
