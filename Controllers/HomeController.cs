@@ -29,6 +29,7 @@ namespace products.Controllers
             //readFile.readDataSet();
             readFile.createDbAndInsertValues();
 
+
             ViewData["Message"] = "Your contact page.";
 
             return View();
