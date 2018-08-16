@@ -29,7 +29,7 @@ namespace products.Models
                                 string line;
 
                                 while((line = sr.ReadLine()) != null) {
-                                    var delimitedLine = line.Split();
+                                    var delimitedLine = line.Split('\t');
                                     var priceValueId = delimitedLine[0];
                                     var created = delimitedLine[1];
                                     var modified = delimitedLine[2];
@@ -39,7 +39,7 @@ namespace products.Models
                                     var validForm = delimitedLine[6];
                                     var validUntil = delimitedLine[7];
                                     var unitPrice = delimitedLine[8];
-                        
+
                                     var insertCmd = connection.CreateCommand();
                                     insertCmd.CommandText = $"INSERT INTO products VALUES('{priceValueId}', '{created}', '{modified}', '{catalogEntryCode}', '{marketId}', '{currencyCode}', '{validForm}', '{validUntil}', '{unitPrice}')";
                                     insertCmd.ExecuteNonQuery();                       
@@ -53,6 +53,27 @@ namespace products.Models
             catch (Exception e) {
                 Console.WriteLine(e.Message);
             }        
+        }
+
+        public void getCatalogEntryCodeFromDB() {
+            var connectionString = new SqliteConnectionStringBuilder();
+            connectionString.DataSource = "./products.db";
+
+            using(var connection = new SqliteConnection(connectionString.ConnectionString)) 
+            {
+                connection.Open();
+
+                var selectCmd = connection.CreateCommand();
+                selectCmd.CommandText = "SELECT DISTINCT catalogEntryCode FROM products";
+                using (var reader = selectCmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string res = reader["catalogEntryCode"].ToString();
+                        Console.WriteLine(res);
+                    }
+                }
+            }
         }
     }
 }
