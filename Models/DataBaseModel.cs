@@ -19,7 +19,7 @@ namespace products.Models
                         connection.Open();
 
                         var createTable = connection.CreateCommand();
-                        createTable.CommandText = "CREATE TABLE products(priceValueId VARCHAR(50), created VARCHAR(50), modified VARCHAR(50), catalogEntryCode VARCHAR(50), marketId VARCHAR(50), currencyCode VARCHAR(50), validFrom VARCHAR(50), validUntil VARCHAR(50), unitPrice VARCHAR(50))";
+                        createTable.CommandText = "CREATE TABLE products(priceValueId VARCHAR(50) PRIMARY KEY, created VARCHAR(50), modified VARCHAR(50), catalogEntryCode VARCHAR(50), marketId VARCHAR(50), currencyCode VARCHAR(50), validFrom VARCHAR(50), validUntil VARCHAR(50), unitPrice VARCHAR(50))";
                         createTable.ExecuteNonQuery();
 
                         using (var transaction = connection.BeginTransaction())
@@ -55,9 +55,10 @@ namespace products.Models
             }        
         }
 
-        public void getCatalogEntryCodeFromDB() {
+        public List<string> getCatalogEntryCodeFromDB() {
             var connectionString = new SqliteConnectionStringBuilder();
             connectionString.DataSource = "./products.db";
+            List<string> catalogEntryCodes = new List<string>();
 
             using(var connection = new SqliteConnection(connectionString.ConnectionString)) 
             {
@@ -70,10 +71,11 @@ namespace products.Models
                     while (reader.Read())
                     {
                         string res = reader["catalogEntryCode"].ToString();
-                        Console.WriteLine(res);
+                        catalogEntryCodes.Add(res);
                     }
                 }
             }
+            return catalogEntryCodes;
         }
     }
 }

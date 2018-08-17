@@ -27,9 +27,8 @@ namespace products.Controllers
         {
             var databaseModel = new DataBaseModel();
             //databaseModel.createDbAndInsertValues();
-            databaseModel.getCatalogEntryCodeFromDB();
-
-            ViewData["Message"] = "Your contact page.";
+            var catalogEntryCodes = databaseModel.getCatalogEntryCodeFromDB();
+            ViewData["Message"] = catalogEntryCodes;
 
             return View();
         }

@@ -11,6 +11,15 @@
     425.555.0100
 </address>
 
+<div>
+    <ul>
+        @foreach(var catalogEntry in (List<string>)ViewData["Message"])
+        {
+            <li><a href="/@catalogEntry">@catalogEntry</a></li>
+        }
+    </ul>
+</div>
+
 <address>
     <strong>Support:</strong> <a href="mailto:Support@example.com">Support@example.com</a><br />
     <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
