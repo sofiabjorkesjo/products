@@ -11,12 +11,20 @@ namespace products.Controllers
 {
     public class SkuController : Controller
     {
+        [Route("")]
         public IActionResult Index()
         {
             var databaseModel = new DataBaseModel();
             //databaseModel.createDbAndInsertValues();
             var catalogEntryCodes = databaseModel.getCatalogEntryCodeFromDB();
             ViewData["CatalogEntryCodes"] = catalogEntryCodes;
+            return View();
+        }
+
+        [Route("/Sku")]
+        [Route("/Sku/{catalogEntryCode}")]
+        public IActionResult Sku(int catalogEntryCode)
+        {
             return View();
         }
 
