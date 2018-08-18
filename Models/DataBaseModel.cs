@@ -7,6 +7,7 @@ namespace products.Models
 {
     public class DataBaseModel
     {
+        //Create SQLite DB, reads dataset and insert values to DB
         public void createDbAndInsertValues() {
             try
             {
@@ -55,7 +56,7 @@ namespace products.Models
             }        
         }
 
-        public List<string> getCatalogEntryCodeFromDB() {
+        public List<string> getCatalogEntryCodesFromDB() {
             var connectionString = new SqliteConnectionStringBuilder();
             connectionString.DataSource = "./products.db";
             List<string> catalogEntryCodes = new List<string>();
@@ -76,6 +77,35 @@ namespace products.Models
                 }
             }
             return catalogEntryCodes;
+        }
+
+        public void getValuesFromDB(string catalogEntryCode)
+        {
+            var connectionString = new SqliteConnectionStringBuilder();
+            connectionString.DataSource = "./products.db";
+
+            using(var connection = new SqliteConnection(connectionString.ConnectionString)) 
+            {
+                connection.Open();
+
+                var selectCmd = connection.CreateCommand();
+                selectCmd.CommandText = $"SELECT * FROM products WHERE catalogEntryCode='{catalogEntryCode}';";
+
+                using (var reader = selectCmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string priceValueId = reader["priceValueId"].ToString();
+                        string created = reader["created"].ToString();
+                        string modified = reader["modified"].ToString();
+                        string marketId = reader["marketId"].ToString();
+                        string currencyCode = reader["currencyCode"].ToString();
+                        string validFrom = reader["validFrom"].ToString();
+                        string validUntil = reader["validUntil"].ToString();
+                        string unitPrice= reader["unitPrice"].ToString();                
+                    }
+                }
+            }
         }
     }
 }
