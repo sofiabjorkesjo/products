@@ -16,7 +16,7 @@ namespace products.Controllers
         public IActionResult Index()
         {
             var databaseModel = new DataBaseModel();
-            //databaseModel.createDbAndInsertValues();
+            databaseModel.createDbAndInsertValues();
             var catalogEntryCodes = databaseModel.getCatalogEntryCodesFromDB();
             ViewData["CatalogEntryCodes"] = catalogEntryCodes;
             return View();
@@ -26,11 +26,11 @@ namespace products.Controllers
         public IActionResult Sku(string catalogEntryCode)
         {
             var databaseModel = new DataBaseModel();
-            databaseModel.getValuesFromDB(catalogEntryCode);
+            var productRowList = databaseModel.getValuesFromDB(catalogEntryCode);
+            ViewData["ProductRowList"] = productRowList;
 
             return View();
         }
-
 
         public IActionResult Error()
         {

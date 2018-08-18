@@ -1,1 +1,22 @@
 <p>Test</p>
+
+<div>
+    <table style="width:100%">
+        <tr>
+            <th>Marknad</th>
+            <th>Pris</th>
+            <th>Startdatum</th>
+            <th>Slutdatum</th>
+        </tr>
+        @foreach(var productRow in (List<ProductRow>)ViewData["ProductRowList"])
+        {
+            <tr>
+                <th>@productRow.MarketId</th>
+                <th>@productRow.UnitPrice</th>
+                <th>@productRow.ValidFrom</th>
+                <th>@productRow.ValidUntil</th>
+            </tr>
+        }      
+        
+    </table>
+</div>

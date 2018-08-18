@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text;
 using Microsoft.Data.Sqlite;
 using System.Collections.Generic;
 
@@ -45,7 +46,8 @@ namespace products.Models
                                     insertCmd.CommandText = $"INSERT INTO products VALUES('{priceValueId}', '{created}', '{modified}', '{catalogEntryCode}', '{marketId}', '{currencyCode}', '{validForm}', '{validUntil}', '{unitPrice}')";
                                     insertCmd.ExecuteNonQuery();                       
                                 };  
-                                transaction.Commit(); 
+                                transaction.Commit();
+                                deleteRow(); 
                             }
                         }
                     }
@@ -56,7 +58,24 @@ namespace products.Models
             }        
         }
 
-        public List<string> getCatalogEntryCodesFromDB() {
+        public void deleteRow()
+        {
+            var connectionString = new SqliteConnectionStringBuilder();
+            connectionString.DataSource = "./products.db";
+
+            using(var connection = new SqliteConnection(connectionString.ConnectionString)) 
+            {
+                connection.Open();
+
+                var selectCmd = connection.CreateCommand();
+                selectCmd.CommandText = "DELETE FROM products WHERE priceValueId='PriceValueId'";
+                selectCmd.ExecuteReader();
+               
+            }
+        }
+
+        public List<string> getCatalogEntryCodesFromDB() 
+        {
             var connectionString = new SqliteConnectionStringBuilder();
             connectionString.DataSource = "./products.db";
             List<string> catalogEntryCodes = new List<string>();
@@ -79,7 +98,7 @@ namespace products.Models
             return catalogEntryCodes;
         }
 
-        public void getValuesFromDB(string catalogEntryCode)
+        public List<ProductRow> getValuesFromDB(string catalogEntryCode)
         {
             var connectionString = new SqliteConnectionStringBuilder();
             connectionString.DataSource = "./products.db";
@@ -99,18 +118,15 @@ namespace products.Models
                     {
                         var productRow = new ProductRow();
                         
-                        productRow.PriceValueId = reader["priceValueId"].ToString();
-                        productRow.Created = reader["created"].ToString();
-                        productRow.Modified = reader["modified"].ToString();
                         productRow.MarketId = reader["marketId"].ToString();
-                        productRow.CurrencyCode = reader["currencyCode"].ToString();
                         productRow.ValidFrom = reader["validFrom"].ToString();
                         productRow.ValidUntil = reader["validUntil"].ToString();
                         productRow.UnitPrice = reader["unitPrice"].ToString();
 
                         productRowList.Add(productRow); 
                     }
-                }
+                }  
+                return productRowList;
             }
         }
     }
