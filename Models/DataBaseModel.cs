@@ -88,6 +88,8 @@ namespace products.Models
             {
                 connection.Open();
 
+                var productRowList = new List<ProductRow>();
+
                 var selectCmd = connection.CreateCommand();
                 selectCmd.CommandText = $"SELECT * FROM products WHERE catalogEntryCode='{catalogEntryCode}';";
 
@@ -95,14 +97,18 @@ namespace products.Models
                 {
                     while (reader.Read())
                     {
-                        string priceValueId = reader["priceValueId"].ToString();
-                        string created = reader["created"].ToString();
-                        string modified = reader["modified"].ToString();
-                        string marketId = reader["marketId"].ToString();
-                        string currencyCode = reader["currencyCode"].ToString();
-                        string validFrom = reader["validFrom"].ToString();
-                        string validUntil = reader["validUntil"].ToString();
-                        string unitPrice= reader["unitPrice"].ToString();                
+                        var productRow = new ProductRow();
+                        
+                        productRow.PriceValueId = reader["priceValueId"].ToString();
+                        productRow.Created = reader["created"].ToString();
+                        productRow.Modified = reader["modified"].ToString();
+                        productRow.MarketId = reader["marketId"].ToString();
+                        productRow.CurrencyCode = reader["currencyCode"].ToString();
+                        productRow.ValidFrom = reader["validFrom"].ToString();
+                        productRow.ValidUntil = reader["validUntil"].ToString();
+                        productRow.UnitPrice = reader["unitPrice"].ToString();
+
+                        productRowList.Add(productRow); 
                     }
                 }
             }

@@ -12,6 +12,7 @@ namespace products.Controllers
     public class SkuController : Controller
     {
         [Route("")]
+        [Route("/Sku")]
         public IActionResult Index()
         {
             var databaseModel = new DataBaseModel();
@@ -20,8 +21,7 @@ namespace products.Controllers
             ViewData["CatalogEntryCodes"] = catalogEntryCodes;
             return View();
         }
-
-        [Route("/Sku")]
+        
         [Route("/Sku/{catalogEntryCode}")]
         public IActionResult Sku(string catalogEntryCode)
         {
