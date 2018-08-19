@@ -26,9 +26,16 @@ namespace products.Controllers
         public IActionResult Sku(string catalogEntryCode)
         {
             var databaseModel = new DataBaseModel();
-            var productRowList = databaseModel.getValuesFromDB(catalogEntryCode);
-            ViewData["ProductRowList"] = productRowList;
-
+            var list = databaseModel.getValuesFromDB(catalogEntryCode);
+            var allMarketId = new List<string>();
+        
+            foreach(KeyValuePair<string, List<ProductRow>> entry in list)
+            {
+                allMarketId.Add(entry.Key);
+                ViewData[entry.Key] = entry.Value; 
+            }
+            
+            ViewData["allMarketId"] = allMarketId;
             return View();
         }
 

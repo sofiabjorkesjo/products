@@ -1,22 +1,24 @@
-<p>Test</p>
-
 <div>
-    <table style="width:100%">
-        <tr>
-            <th>Marknad</th>
-            <th>Pris</th>
-            <th>Startdatum</th>
-            <th>Slutdatum</th>
-        </tr>
-        @foreach(var productRow in (List<ProductRow>)ViewData["ProductRowList"])
+    @foreach(var name in (ViewData["allMarketId"] as List<string>))
+    {
+        <h2>@name</h2>
+        <table style="width:100%">
+        
+        @foreach(var product in (ViewData[name] as List<ProductRow>))
         {
             <tr>
-                <th>@productRow.MarketId</th>
-                <th>@productRow.UnitPrice</th>
-                <th>@productRow.ValidFrom</th>
-                <th>@productRow.ValidUntil</th>
+                <th>Marknad</th>
+                <th>Pris</th>
+                <th>Start och slut</th>
             </tr>
-        }      
-        
-    </table>
+            <tr>
+                <th>@product.MarketId</th>
+                <th>@product.UnitPrice</th>
+                <th>@product.ValidFrom - @product.ValidUntil</th>
+            </tr>    
+        }
+     
+        </table>
+        <hr>
+    }
 </div>

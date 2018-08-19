@@ -99,7 +99,7 @@ namespace products.Models
             return catalogEntryCodes;
         }
 
-        public List<ProductRow> getValuesFromDB(string catalogEntryCode)
+        public Dictionary<string, List<ProductRow>> getValuesFromDB(string catalogEntryCode)
         {
             var connectionString = new SqliteConnectionStringBuilder();
             connectionString.DataSource = "./products.db";
@@ -108,7 +108,26 @@ namespace products.Models
             {
                 connection.Open();
 
-                var productRowList = new List<ProductRow>();
+                 List<ProductRow> productRowList;
+            
+                //get all unique marketId and create list for each one of them
+
+                Dictionary<string, List<ProductRow>> List = new Dictionary<string, List<ProductRow>>();
+                
+                var selectCmdDistinct = connection.CreateCommand();
+                selectCmdDistinct.CommandText = $"SELECT DISTINCT marketId FROM products WHERE catalogEntryCode='{catalogEntryCode}';";
+
+                using (var reader = selectCmdDistinct.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var res = reader["marketId"].ToString();
+                        productRowList = new List<ProductRow>();
+                        List.Add(res, productRowList);
+                    }
+                }
+
+                //Get values from DB that matches the catalogEntyrCode and them to matching list
 
                 var selectCmd = connection.CreateCommand();
                 selectCmd.CommandText = $"SELECT * FROM products WHERE catalogEntryCode='{catalogEntryCode}';";
@@ -124,12 +143,10 @@ namespace products.Models
                         productRow.ValidUntil = reader["validUntil"].ToString();
                         productRow.UnitPrice = reader["unitPrice"].ToString();
 
-                        productRowList.Add(productRow);
+                        List[productRow.MarketId].Add(productRow);
                     }
                 }
-
-                List<ProductRow> sortedList = productRowList.OrderBy(x=>x.ValidFrom).ThenBy(x=>x.MarketId).ToList();
-                return sortedList;
+                return List;
             }
         }
     }
