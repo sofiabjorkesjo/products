@@ -18,7 +18,7 @@ namespace products.Models
             return connectionString;
         }
 
-        public void createDB()
+        public void createProductsTable()
         {
             if(!File.Exists("products.db")) 
             {
@@ -30,14 +30,13 @@ namespace products.Models
                     var createTable = connection.CreateCommand();
                     createTable.CommandText = "CREATE TABLE products(priceValueId VARCHAR(50) PRIMARY KEY, created VARCHAR(50), modified VARCHAR(50), catalogEntryCode VARCHAR(50), marketId VARCHAR(50), currencyCode VARCHAR(50), validFrom VARCHAR(50), validUntil VARCHAR(50), unitPrice VARCHAR(50))";
                     createTable.ExecuteNonQuery();
-                    insertValuesInDB();
                 }
             }
         }
 
         
-        //Create SQLite DB, reads dataset and insert values to DB
-        private void insertValuesInDB() {
+        //Reads dataset and insert values to DB
+        public void insertValuesToProductsTable(string filename) {
             try
             {    
                 SqliteConnectionStringBuilder connectionString = connectToDB();
@@ -48,7 +47,7 @@ namespace products.Models
 
                     using (var transaction = connection.BeginTransaction())
                     {
-                        using (StreamReader sr = new StreamReader("price_detail.csv"))
+                        using (StreamReader sr = new StreamReader(filename))
                         {
                             string line;
 
@@ -93,7 +92,7 @@ namespace products.Models
             }
         }
 
-        public List<string> getCatalogEntryCodesFromDB() 
+        public List<string> getCatalogEntryCodes() 
         {
             SqliteConnectionStringBuilder connectionString = connectToDB();
             List<string> catalogEntryCodes = new List<string>();
@@ -116,7 +115,7 @@ namespace products.Models
             return catalogEntryCodes;
         }
 
-        public Dictionary<string, List<ProductRow>> getValuesFromDB(string catalogEntryCode)
+        public Dictionary<string, List<ProductRow>> getProducts(string catalogEntryCode)
         {
             SqliteConnectionStringBuilder connectionString = connectToDB();
 
@@ -160,6 +159,8 @@ namespace products.Models
                         productRow.ValidUntil = convertToDateFormatString(reader["validUntil"].ToString());
                         productRow.UnitPrice = roundPrice(reader["unitPrice"].ToString());
 
+                        //Do not add productRow if it already exist with cheaper price
+
                         foreach(ProductRow row in List[productRow.MarketId])
                         {
                             if(row.MarketId == productRow.MarketId && row.CurrencyCode == productRow.CurrencyCode && row.ValidFrom == productRow.ValidFrom && row.ValidUntil == productRow.ValidUntil)
@@ -171,7 +172,6 @@ namespace products.Models
                                 }
                             }
                         }
-
                         List[productRow.MarketId].Add(productRow);
                     }
 

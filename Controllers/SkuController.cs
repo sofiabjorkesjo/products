@@ -17,16 +17,18 @@ namespace products.Controllers
         [Route("/Sku")]
         public IActionResult Index()
         {
-            databaseModel.createDB();
-            List<string> catalogEntryCodes = databaseModel.getCatalogEntryCodesFromDB();
+            databaseModel.createProductsTable();
+            databaseModel.insertValuesToProductsTable("price_detail.csv");
+            List<string> catalogEntryCodes = databaseModel.getCatalogEntryCodes();
             ViewData["CatalogEntryCodes"] = catalogEntryCodes;
+
             return View();
         }
         
         [Route("/Sku/{catalogEntryCode}")]
         public IActionResult Sku(string catalogEntryCode)
         {
-            Dictionary<string, List<ProductRow>> list = databaseModel.getValuesFromDB(catalogEntryCode);
+            Dictionary<string, List<ProductRow>> list = databaseModel.getProducts(catalogEntryCode);
             List<string> allMarketId = new List<string>();
         
             foreach(KeyValuePair<string, List<ProductRow>> entry in list)
