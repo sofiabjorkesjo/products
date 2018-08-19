@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using Microsoft.Data.Sqlite;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace products.Models
 {
@@ -123,10 +124,12 @@ namespace products.Models
                         productRow.ValidUntil = reader["validUntil"].ToString();
                         productRow.UnitPrice = reader["unitPrice"].ToString();
 
-                        productRowList.Add(productRow); 
+                        productRowList.Add(productRow);
                     }
-                }  
-                return productRowList;
+                }
+
+                List<ProductRow> sortedList = productRowList.OrderBy(x=>x.ValidFrom).ThenBy(x=>x.MarketId).ToList();
+                return sortedList;
             }
         }
     }

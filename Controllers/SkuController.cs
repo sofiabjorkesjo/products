@@ -16,7 +16,7 @@ namespace products.Controllers
         public IActionResult Index()
         {
             var databaseModel = new DataBaseModel();
-            databaseModel.createDbAndInsertValues();
+            //databaseModel.createDbAndInsertValues();
             var catalogEntryCodes = databaseModel.getCatalogEntryCodesFromDB();
             ViewData["CatalogEntryCodes"] = catalogEntryCodes;
             return View();
