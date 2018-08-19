@@ -11,13 +11,14 @@ namespace products.Controllers
 {
     public class SkuController : Controller
     {
+        DataBaseModel databaseModel = new DataBaseModel();
+
         [Route("")]
         [Route("/Sku")]
         public IActionResult Index()
         {
-            var databaseModel = new DataBaseModel();
-            //databaseModel.createDbAndInsertValues();
-            var catalogEntryCodes = databaseModel.getCatalogEntryCodesFromDB();
+            databaseModel.createDB();
+            List<string> catalogEntryCodes = databaseModel.getCatalogEntryCodesFromDB();
             ViewData["CatalogEntryCodes"] = catalogEntryCodes;
             return View();
         }
@@ -25,9 +26,8 @@ namespace products.Controllers
         [Route("/Sku/{catalogEntryCode}")]
         public IActionResult Sku(string catalogEntryCode)
         {
-            var databaseModel = new DataBaseModel();
-            var list = databaseModel.getValuesFromDB(catalogEntryCode);
-            var allMarketId = new List<string>();
+            Dictionary<string, List<ProductRow>> list = databaseModel.getValuesFromDB(catalogEntryCode);
+            List<string> allMarketId = new List<string>();
         
             foreach(KeyValuePair<string, List<ProductRow>> entry in list)
             {

@@ -12,6 +12,17 @@ body {
     padding-right: 15px;
 }
 
+h1{
+    text-align: center;
+    font-family: Helvetica;
+}
+
+li {
+    font-size: 14px;
+    font-family: Helvetica;
+    list-style: none;
+}
+
 /* Carousel */
 .carousel-caption p {
     font-size: 20px;
@@ -35,3 +46,5 @@ body {
         display: none;
     }
 }
+
+
