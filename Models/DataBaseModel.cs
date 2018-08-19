@@ -160,6 +160,18 @@ namespace products.Models
                         productRow.ValidUntil = convertToDateFormatString(reader["validUntil"].ToString());
                         productRow.UnitPrice = roundPrice(reader["unitPrice"].ToString());
 
+                        foreach(ProductRow row in List[productRow.MarketId])
+                        {
+                            if(row.MarketId == productRow.MarketId && row.CurrencyCode == productRow.CurrencyCode && row.ValidFrom == productRow.ValidFrom && row.ValidUntil == productRow.ValidUntil)
+                            {
+                                if(createPrice(row.UnitPrice) < createPrice(productRow.UnitPrice))
+                                {
+                                    row.UnitPrice = productRow.UnitPrice;
+                                    continue;
+                                }
+                            }
+                        }
+
                         List[productRow.MarketId].Add(productRow);
                     }
 
@@ -191,6 +203,13 @@ namespace products.Models
             int index = price.IndexOf(".");
             price = price.Substring(0, index + 3);
             return price;
+        }
+
+        private int createPrice(string price)
+        {
+            price = price.Replace(".", ",");
+            var intPrice = Int32.Parse(price);
+            return intPrice;
         }
     }
 }
