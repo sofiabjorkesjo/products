@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.Data.Sqlite;
 using System.Collections.Generic;
 using System.Linq;
+using System.Globalization;
 
 namespace products.Models
 {
@@ -123,6 +124,7 @@ namespace products.Models
                     {
                         var res = reader["marketId"].ToString();
                         productRowList = new List<ProductRow>();
+                        //List<ProductRow> sortedList = productRowList.OrderBy(x=>x.CurrencyCode).ToList();
                         List.Add(res, productRowList);
                     }
                 }
@@ -137,17 +139,35 @@ namespace products.Models
                     while (reader.Read())
                     {
                         var productRow = new ProductRow();
-                        
+
                         productRow.MarketId = reader["marketId"].ToString();
-                        productRow.ValidFrom = reader["validFrom"].ToString();
-                        productRow.ValidUntil = reader["validUntil"].ToString();
-                        productRow.UnitPrice = reader["unitPrice"].ToString();
+                        productRow.CurrencyCode = reader["currencyCode"].ToString();
+                        productRow.ValidFrom = convertToDateFormatString(reader["validFrom"].ToString());
+                        productRow.ValidUntil = convertToDateFormatString(reader["validUntil"].ToString());
+                        productRow.UnitPrice = roundPrice(reader["unitPrice"].ToString());
 
                         List[productRow.MarketId].Add(productRow);
                     }
                 }
                 return List;
             }
+        }
+
+        public string convertToDateFormatString(string date)
+        {
+            if(date != "NULL")
+            {   
+                DateTime parsedDate = DateTime.Parse(date);
+                return parsedDate.ToString();
+            }
+            return date;    
+        }
+
+        public string roundPrice(string price)
+        {
+            int index = price.IndexOf(".");
+            price = price.Substring(0, index + 3);
+            return price;
         }
     }
 }
