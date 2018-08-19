@@ -129,7 +129,7 @@ namespace products.Models
                 //get all unique marketId and create list for each one of them
 
                 Dictionary<string, List<ProductRow>> List = new Dictionary<string, List<ProductRow>>();
-                
+
                 var selectCmdDistinct = connection.CreateCommand();
                 selectCmdDistinct.CommandText = $"SELECT DISTINCT marketId FROM products WHERE catalogEntryCode='{catalogEntryCode}';";
 
@@ -139,7 +139,6 @@ namespace products.Models
                     {
                         string res = reader["marketId"].ToString();
                         productRowList = new List<ProductRow>();
-                        //List<ProductRow> sortedList = productRowList.OrderBy(x=>x.CurrencyCode).ToList();
                         List.Add(res, productRowList);
                     }
                 }
@@ -163,8 +162,17 @@ namespace products.Models
 
                         List[productRow.MarketId].Add(productRow);
                     }
+
                 }
-                return List;
+
+                Dictionary<string, List<ProductRow>> orderedList = new Dictionary<string, List<ProductRow>>();
+
+                foreach(KeyValuePair<string, List<ProductRow>> entry in List)
+                {
+                    List<ProductRow> sortedList = entry.Value.OrderBy(x=>x.ValidFrom).ToList();
+                    orderedList[entry.Key] = sortedList;
+                }
+                return orderedList;
             }
         }
 
