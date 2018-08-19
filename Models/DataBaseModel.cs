@@ -181,7 +181,7 @@ namespace products.Models
 
                 foreach(KeyValuePair<string, List<ProductRow>> entry in List)
                 {
-                    List<ProductRow> sortedList = entry.Value.OrderBy(x=>x.ValidFrom).ToList();
+                    List<ProductRow> sortedList = entry.Value.OrderByDescending(x=>x.ValidFrom).ToList();
                     orderedList[entry.Key] = sortedList;
                 }
                 return orderedList;
