@@ -181,9 +181,30 @@ namespace products.Models
 
                 foreach(KeyValuePair<string, List<ProductRow>> entry in List)
                 {
-                    List<ProductRow> sortedList = entry.Value.OrderByDescending(x=>x.ValidFrom).ToList();
+                    List<ProductRow> sortedList = entry.Value.OrderBy(x=>x.ValidFrom).ToList();
                     orderedList[entry.Key] = sortedList;
                 }
+
+                foreach(KeyValuePair<string, List<ProductRow>> entry in orderedList)
+                {  
+                    for(int i = 0; i < entry.Value.Count; i++)
+                    {  
+                        if(i > 0)
+                        {
+                            int index = i - 1;
+                            if(entry.Value[index].ValidUntil == "NULL") {
+                                entry.Value[index].ValidUntil = DateTime.Now.ToString("MMM-dd-yy");
+                            }
+                            //Kolla pris också.
+                            if(convertToDateFormat(entry.Value[i].ValidFrom) < convertToDateFormat(entry.Value[index].ValidUntil))
+                            {
+                                entry.Value[index].ValidUntil = entry.Value[i].ValidFrom;
+                            } else {
+                                //Ta bort den aktuella raden [i]
+                            }
+                        }        
+                    }
+                }            
                 return orderedList;
             }
         }
@@ -196,6 +217,12 @@ namespace products.Models
                 return parsedDate.ToString();
             }
             return date;    
+        }
+
+        private DateTime convertToDateFormat(string date)
+        { 
+            DateTime parsedDate = DateTime.Parse(date);
+            return parsedDate; 
         }
 
         private string roundPrice(string price)
