@@ -7,8 +7,8 @@
                 <th>Marknad</th>
                 <th>Valuta</th>
                 <th>Pris</th>
-                <th>Startdatum</th>
-                <th>Slutdatum</th>
+                <th>Startdatum - Slutdatum</th>
+
             </tr>
         
         @foreach(var product in (ViewData[name] as List<ProductRow>))
@@ -18,14 +18,7 @@
                 <th>@product.MarketId</th>
                 <th>@product.CurrencyCode</th>
                 <th>@product.UnitPrice</th>
-                <th>@product.ValidFrom </th>
-
-                @if(product.ValidUntil == "NULL") {
-                    <th>-</th>
-                } else {
-                    <th>@product.ValidUntil</th>
-                }
-                
+                <th>@product.ValidFrom - @product.ValidUntil</th>        
             </tr>    
         }
      
