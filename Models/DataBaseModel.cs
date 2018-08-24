@@ -160,23 +160,10 @@ namespace products.Models
 
                         productRow.MarketId = reader["marketId"].ToString();
                         productRow.CurrencyCode = reader["currencyCode"].ToString();
-                        productRow.ValidFrom = convertToDateFormatString(reader["validFrom"].ToString());
-                        productRow.ValidUntil = convertToDateFormatString(reader["validUntil"].ToString());
+                        productRow.ValidFrom = reader["validFrom"].ToString();
+                        productRow.ValidUntil = reader["validUntil"].ToString();
                         productRow.UnitPrice = roundPrice(reader["unitPrice"].ToString());
 
-                        //Do not add productRow if it already exist with cheaper price
-
-                        foreach(ProductRow row in List[productRow.MarketId])
-                        {
-                            if(row.MarketId == productRow.MarketId && row.CurrencyCode == productRow.CurrencyCode && row.ValidFrom == productRow.ValidFrom && row.ValidUntil == productRow.ValidUntil)
-                            {
-                                if(createDouble(row.UnitPrice) < createDouble(productRow.UnitPrice))
-                                {
-                                    row.UnitPrice = productRow.UnitPrice;
-                                    continue;
-                                }
-                            }
-                        }
                         List[productRow.MarketId].Add(productRow);
                     }
 
@@ -201,6 +188,12 @@ namespace products.Models
                     isNull = false;
                     for(int i = 0; i < entry.Value.Count; i++)
                     {  
+                        if(entry.Value[i].ValidUntil == "NULL")
+                            {
+                                isNull = true;
+                                unitPrice = entry.Value[i].UnitPrice;
+                                entry.Value[i].ValidUntil = DateTime.MaxValue.ToString();
+                            }
                         if(i > 0)
                         {          
                             int index = i - 1;
@@ -209,7 +202,7 @@ namespace products.Models
                                 isNull = true;
                                 unitPrice = entry.Value[index].UnitPrice;
                                 entry.Value[index].ValidUntil = DateTime.MaxValue.ToString();
-                            }
+                            }                       
 
                             if(convertToDateFormat(entry.Value[i].ValidFrom) < convertToDateFormat(entry.Value[index].ValidUntil) && createDouble(entry.Value[i].UnitPrice) < createDouble(entry.Value[index].UnitPrice))
                             {
@@ -244,6 +237,7 @@ namespace products.Models
                                 if (!newItems.ContainsKey(entry.Key)) {
                                     newItems[entry.Key] = new List<ProductRow>();
                                 }
+
                                 newItems[entry.Key].Add(productRow2);             
                             } 
                         }        
@@ -256,19 +250,21 @@ namespace products.Models
                     {
                         orderedList[marketId] = orderedList[marketId].Concat(newItems[marketId]).ToList();
                     }
-                }                    
-                return orderedList;
-            }
-        }
+                }
 
-        private string convertToDateFormatString(string date)
-        {
-            if(date != "NULL")
-            {   
-                DateTime parsedDate = DateTime.Parse(date);
-                return parsedDate.ToString();
+                foreach(string marketId in allMarkets)
+                {
+                    orderedList[marketId] = orderedList[marketId].Distinct().ToList();
+                }
+
+                Dictionary<String, List<ProductRow>> newSortedList = sortLists(orderedList);
+
+                foreach(KeyValuePair<string, List<ProductRow>> entry in newSortedList)
+                {
+                    changeValidUntil(entry.Value);
+                }                                 
+                return newSortedList;
             }
-            return date;    
         }
 
         private DateTime convertToDateFormat(string date)
@@ -284,19 +280,51 @@ namespace products.Models
             return price;
         }
 
-        private int createPrice(string price)
-        {
-            price = price.Replace(".", ",");
-            var intPrice = Int32.Parse(price);
-            return intPrice;
-        }
-
         private double createDouble(string price)
         {
             price = price.Replace(".", ",");
             var doublePrice = Convert.ToDouble(price);
             return doublePrice;
         }
+
+        private  Dictionary<String, List<ProductRow>> sortLists(Dictionary<String, List<ProductRow>> Dictionary)
+        {
+            Dictionary<String, List<ProductRow>> sortedDictionary = new Dictionary<String, List<ProductRow>>();
+            foreach(KeyValuePair<string, List<ProductRow>> entry in Dictionary)
+            {
+                List<ProductRow> sortedList = entry.Value.OrderBy(x=>x.ValidFrom).ToList();
+                sortedDictionary[entry.Key] = sortedList;
+            }
+            return sortedDictionary;
+        }
+
+        private List<ProductRow> changeValidUntil(List<ProductRow> productList)
+        {
+            for(int i = 0; i < productList.Count; i++)
+            {
+                if(productList[i].ValidUntil == DateTime.MaxValue.ToString())
+                {
+
+                    if(i == productList.Count - 1)
+                    {
+                        productList[i].ValidUntil = "";
+                    } else if(createDouble(productList[i + 1].UnitPrice) < createDouble(productList[i].UnitPrice))
+                    {
+                        productList[i].ValidUntil = productList[i + 1].ValidFrom;
+                    } else if(createDouble(productList[i + 1].UnitPrice) > createDouble(productList[i].UnitPrice))
+                    {
+                        productList.Remove(productList[i + 1]);
+                    } 
+                    if(i == productList.Count - 1)
+                    {
+                        productList[i].ValidUntil = "";
+                    }
+                }        
+            }
+            return productList;
+        }
+
+       
 
 
     }
