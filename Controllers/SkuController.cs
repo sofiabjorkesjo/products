@@ -39,10 +39,17 @@ namespace products.Controllers
             }
             
             ViewData["allMarketId"] = allMarketId;
+
+            // List<string> list2 = databaseModel.getAllMarketId(catalogEntryCode);
+            // Dictionary<string, List<ProductRow>> dictonary = productModel.createDictionary(list2);
+            // List<List<string>> matchingValues =  databaseModel.getMatchingValues(catalogEntryCode);
+            // productModel.addValuesToListList(matchingValues, dictonary);
+
+
             return View();
 
-            //List<string> list2 = databaseModel.getAllProducts(catalogEntryCode);
-            //productModel.createDictionary(list);
+
+            
            
         }
 

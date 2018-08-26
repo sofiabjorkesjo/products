@@ -116,7 +116,7 @@ namespace products.Models
             return catalogEntryCodes;
         }
 
-        public List<string> getAllProducts(string catalogEntryCode) 
+        public List<string> getAllMarketId(string catalogEntryCode) 
         {
             SqliteConnectionStringBuilder connectionString = connectToDB();
             List<string> list = new List<string>();
@@ -140,6 +140,40 @@ namespace products.Models
                 }
             }
             return list;
+        }
+
+        public List<List<string>> getMatchingValues(string catalogEntryCode)
+        {
+            SqliteConnectionStringBuilder connectionString = connectToDB();
+
+            using(var connection = new SqliteConnection(connectionString.ConnectionString)) 
+            {
+                connection.Open();
+
+                var selectCmd = connection.CreateCommand();
+                selectCmd.CommandText = $"SELECT * FROM products WHERE catalogEntryCode='{catalogEntryCode}';";
+
+                List<string> product;
+                List<List<string>> allMarkets = new List<List<string>>();
+
+                using (var reader = selectCmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        product = new List<string>();
+
+                        product.Add(reader["marketId"].ToString());
+                        product.Add(reader["currencyCode"].ToString());
+                        product.Add(reader["validFrom"].ToString());
+                        product.Add(reader["validUntil"].ToString());
+                        product.Add(roundPrice(reader["unitPrice"].ToString()));
+
+                        allMarkets.Add(product);
+                    }
+                }
+                return allMarkets;
+            }
+
         }
 
 
@@ -173,7 +207,7 @@ namespace products.Models
                     }
                 }
 
-                //Get values from DB that matches the catalogEntyrCode and them to matching list
+                //Get values from DB that matches the catalogEntyrCode and add them to matching list
 
                 var selectCmd = connection.CreateCommand();
                 selectCmd.CommandText = $"SELECT * FROM products WHERE catalogEntryCode='{catalogEntryCode}';";
