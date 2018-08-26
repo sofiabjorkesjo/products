@@ -12,6 +12,7 @@ namespace products.Controllers
     public class SkuController : Controller
     {
         DataBaseModel databaseModel = new DataBaseModel();
+        ProductsModel productModel = new ProductsModel();
 
         [Route("")]
         [Route("/Sku")]
@@ -39,6 +40,10 @@ namespace products.Controllers
             
             ViewData["allMarketId"] = allMarketId;
             return View();
+
+            //List<string> list2 = databaseModel.getAllProducts(catalogEntryCode);
+            //productModel.createDictionary(list);
+           
         }
 
         public IActionResult Error()

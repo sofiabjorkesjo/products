@@ -116,6 +116,34 @@ namespace products.Models
             return catalogEntryCodes;
         }
 
+        public List<string> getAllProducts(string catalogEntryCode) 
+        {
+            SqliteConnectionStringBuilder connectionString = connectToDB();
+            List<string> list = new List<string>();
+
+            using(var connection = new SqliteConnection(connectionString.ConnectionString)) 
+            {
+                connection.Open();
+
+                //get all unique marketId and create list for each one of them
+
+                var selectCmdDistinct = connection.CreateCommand();
+                selectCmdDistinct.CommandText = $"SELECT DISTINCT marketId FROM products WHERE catalogEntryCode='{catalogEntryCode}';";
+
+                using (var reader = selectCmdDistinct.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string res = reader["marketId"].ToString();
+                        list.Add(res);
+                    }
+                }
+            }
+            return list;
+        }
+
+
+
         public Dictionary<string, List<ProductRow>> getProducts(string catalogEntryCode)
         {
             SqliteConnectionStringBuilder connectionString = connectToDB();
@@ -129,6 +157,7 @@ namespace products.Models
                 //get all unique marketId and create list for each one of them
 
                 Dictionary<string, List<ProductRow>> List = new Dictionary<string, List<ProductRow>>();
+                
 
                 var selectCmdDistinct = connection.CreateCommand();
                 selectCmdDistinct.CommandText = $"SELECT DISTINCT marketId FROM products WHERE catalogEntryCode='{catalogEntryCode}';";
@@ -138,6 +167,7 @@ namespace products.Models
                     while (reader.Read())
                     {
                         string res = reader["marketId"].ToString();
+
                         productRowList = new List<ProductRow>();
                         List.Add(res, productRowList);
                     }
