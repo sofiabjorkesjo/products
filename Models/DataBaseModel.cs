@@ -176,6 +176,8 @@ namespace products.Models
 
         }
 
+        
+
 
 
         public Dictionary<string, List<ProductRow>> getProducts(string catalogEntryCode)
