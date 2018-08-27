@@ -29,39 +29,20 @@ namespace products.Controllers
         [Route("/Sku/{catalogEntryCode}")]
         public IActionResult Sku(string catalogEntryCode)
         {
-            //Dictionary<string, List<ProductRow>> list = databaseModel.getProducts(catalogEntryCode);
-            // List<string> allMarketId = new List<string>();
-        
-            // foreach(KeyValuePair<string, List<ProductRow>> entry in list)
-            // {
-            //     allMarketId.Add(entry.Key);
-            //     ViewData[entry.Key] = entry.Value; 
-            // }
-            
-            // ViewData["allMarketId"] = allMarketId;
-
             List<string> allMarketId = databaseModel.getAllMarketId(catalogEntryCode);
             Dictionary<string, List<ProductRow>> dictonary = productModel.createDictionary(allMarketId);
             List<List<string>> matchingValues =  databaseModel.getMatchingValues(catalogEntryCode);
-            Dictionary<string, List<ProductRow>> dictonary2 = productModel.addValuesToListList(matchingValues, dictonary);
-            Dictionary<string, List<ProductRow>> sortDictionary = productModel.sortDictionary(dictonary2);
+            Dictionary<string, List<ProductRow>> dictonaryList = productModel.addValuesToListList(matchingValues, dictonary);
+            Dictionary<string, List<ProductRow>> sortDictionary = productModel.sortDictionary(dictonaryList);
             Dictionary<string, List<ProductRow>> orderdDictionary = productModel.setProductsList(sortDictionary, allMarketId);
-            
-             List<string> allMarketIds = new List<string>();
         
             foreach(KeyValuePair<string, List<ProductRow>> entry in orderdDictionary)
             {
-                allMarketId.Add(entry.Key);
                 ViewData[entry.Key] = entry.Value; 
             }
-            
+
             ViewData["allMarketId"] = allMarketId;
-
-            return View();
-
-
-            
-           
+            return View(); 
         }
 
         public IActionResult Error()

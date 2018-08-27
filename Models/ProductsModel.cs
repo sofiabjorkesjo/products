@@ -33,7 +33,7 @@ namespace products.Models
                 productRow.CurrencyCode = list[1];
                 productRow.ValidFrom = list[2];
                 productRow.ValidUntil = list[3];
-                productRow.UnitPrice = list[4];
+                productRow.UnitPrice = roundPrice(list[4]);
 
                 dictonary[list[0]].Add(productRow);             
             }
@@ -72,7 +72,9 @@ namespace products.Models
                             entry.Value[i].ValidUntil = DateTime.MaxValue.ToString();
                         }
                     if(i > 0)
-                    {          
+                    { 
+                        
+
                         int index = i - 1;
                         if(checkIfNull(entry.Value[index].ValidUntil)) 
                         {
@@ -108,7 +110,9 @@ namespace products.Models
                             if (!newItems.ContainsKey(entry.Key)) {
                                 newItems[entry.Key] = new List<ProductRow>();
                             }
-                            newItems[entry.Key].Add(newProductRow);             
+                            newItems[entry.Key].Add(newProductRow); 
+
+                                      
                         } 
                     }        
                 }
@@ -136,7 +140,7 @@ namespace products.Models
             return newSortedList;         
         }
 
-         private List<ProductRow> changeValidUntil(List<ProductRow> productList)
+        private List<ProductRow> changeValidUntil(List<ProductRow> productList)
         {
             for(int i = 0; i < productList.Count; i++)
             {
@@ -185,7 +189,7 @@ namespace products.Models
             return productRowNew;
         }
 
-        public Boolean checkIfNull(string value) 
+        private Boolean checkIfNull(string value) 
         {
             if(value == "NULL")
             {
@@ -241,6 +245,13 @@ namespace products.Models
                 return true;
             }
             return false;
+        }
+
+         private string roundPrice(string price)
+        {
+            int index = price.IndexOf(".");
+            price = price.Substring(0, index + 3);
+            return price;
         }
     }
 }
