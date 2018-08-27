@@ -64,7 +64,7 @@ namespace products.Models
                 KeyValuePair<string, List<ProductRow>> entry = list.ElementAt(j);
                 isNull = false;
                 for(int i = 0; i < entry.Value.Count; i++)
-                {  
+                {
                     if(checkIfNull(entry.Value[i].ValidUntil))
                         {
                             isNull = true;
@@ -73,17 +73,22 @@ namespace products.Models
                         }
                     if(i > 0)
                     { 
-                        
-
                         int index = i - 1;
                         if(checkIfNull(entry.Value[index].ValidUntil)) 
                         {
                             isNull = true;
                             unitPrice = entry.Value[index].UnitPrice;
                             entry.Value[index].ValidUntil = DateTime.MaxValue.ToString();
-                        }                       
+                        } 
 
-                        if(ifSmallerDate(entry.Value[i].ValidFrom, entry.Value[index].ValidUntil) && ifSmallerPrice(entry.Value[i].UnitPrice, entry.Value[index].UnitPrice))
+                        if(entry.Value[index].ValidFrom == entry.Value[i].ValidFrom && ifSmallerPrice(entry.Value[i].UnitPrice, entry.Value[index].UnitPrice))
+                        {
+                            entry.Value.Remove(entry.Value[index]);
+                        } else if(entry.Value[index].ValidFrom == entry.Value[i].ValidFrom && ifSmallerPrice(entry.Value[index].UnitPrice, entry.Value[i].UnitPrice))                     
+                        {
+                           entry.Value.Remove(entry.Value[i]); 
+                        }
+                        else if(ifSmallerDate(entry.Value[i].ValidFrom, entry.Value[index].ValidUntil) && ifSmallerPrice(entry.Value[i].UnitPrice, entry.Value[index].UnitPrice))
                         {
                             entry.Value[index].ValidUntil = entry.Value[i].ValidFrom;
                         } else if(ifSmallerDate(entry.Value[i].ValidFrom, entry.Value[index].ValidUntil) && ifBiggerPrice(entry.Value[i].UnitPrice, entry.Value[index].UnitPrice)) 
@@ -114,7 +119,7 @@ namespace products.Models
 
                                       
                         } 
-                    }        
+                    }       
                 }
             }
 
