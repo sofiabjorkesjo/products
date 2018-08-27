@@ -115,9 +115,7 @@ namespace products.Models
                             if (!newItems.ContainsKey(entry.Key)) {
                                 newItems[entry.Key] = new List<ProductRow>();
                             }
-                            newItems[entry.Key].Add(newProductRow); 
-
-                                      
+                            newItems[entry.Key].Add(newProductRow);                                
                         } 
                     }       
                 }
@@ -151,7 +149,6 @@ namespace products.Models
             {
                 if(productList[i].ValidUntil == DateTime.MaxValue.ToString())
                 {
-
                     if(i == productList.Count - 1)
                     {
                         productList[i].ValidUntil = "";
